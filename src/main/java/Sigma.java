@@ -19,6 +19,7 @@ public class Sigma {
         private final HashMap<Integer, Double> means = new HashMap<>();
         @Override
         public void setup(Mapper.Context context) {
+            // 利用LocalCache读取求均值Job的输出文件
             try {
                 Path[] cacheFiles = context.getLocalCacheFiles();
                 if (cacheFiles != null && cacheFiles.length > 0) {
@@ -28,7 +29,7 @@ public class Sigma {
                         while ((line = joinReader.readLine()) != null) {
                             int seq = Integer.parseInt(line.split("\\t")[0]);
                             double mean = Double.parseDouble(line.split("\\t")[1]);
-                            means.put(seq, mean);
+                            means.put(seq, mean);  // 维度序号和相应维度上数据的均值
                         }
                     }
                 }
@@ -47,9 +48,11 @@ public class Sigma {
                 for (; j < i + 20 && j < lines.length; ++j) {
                     String[] data = lines[j].split(",");
                     for (int k = 0; k < 4; ++k)
+                        // 分组求每个维度上数据与均值之差的平方和
                         sums[k] += pow(Double.parseDouble(data[k]) - means.get(k), 2);
                 }
                 for (int k = 0; k < 4; ++k)
+                    // 键：维度 值：“组内各条数据与均值之差的平方和 组内记录总数”
                     context.write(new LongWritable(k), new Text(sums[k] + " " + (j - i)));
                 i = j;
             }
@@ -67,6 +70,7 @@ public class Sigma {
                 num += Integer.parseInt(pair[1]);
                 sum += Double.parseDouble(pair[0]);
             }
+            // 键：维度 值：方差
             context.write(key, new Text(String.valueOf(sum / num)));
         }
     }
