@@ -19,7 +19,7 @@ import static java.lang.Math.sqrt;
 public class Knn {
     static class KnnMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
         private final List<String> tests = new ArrayList<String>();
-        double[] sigmas = {1., 1., 1., 1.};
+        double[] sigmas = {1., 1., 1., 1.};  // 本分支使用加权的欧氏距离，该标准差数组将被修改
 
         @Override
         public void setup(Mapper.Context context) {
@@ -37,6 +37,7 @@ public class Knn {
             } catch (IOException e) {
                 System.err.println("Exception reading DistributedCache:" + e);
             }
+            // 读入存储方差的文件
             try {
                 Path [] cacheFiles = context.getLocalCacheFiles();
                 if (cacheFiles != null && cacheFiles.length > 0) {
@@ -46,7 +47,7 @@ public class Knn {
                         while ((line = joinReader.readLine()) != null) {
                             int seq = Integer.parseInt(line.split("\\t")[0]);
                             double mean = Double.parseDouble(line.split("\\t")[1]);
-                            sigmas[seq] = sqrt(mean);
+                            sigmas[seq] = sqrt(mean);  // 填充标准差数组
                         }
                     }
                 }
