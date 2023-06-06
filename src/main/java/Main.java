@@ -19,8 +19,8 @@ public class Main {
         knn.setOutputKeyClass(LongWritable.class);
         knn.setOutputValueClass(Text.class);
         FileInputFormat.setInputPaths(knn, new Path(args[0]));
-        FileOutputFormat.setOutputPath(knn, new Path(args[1]));
-        knn.addCacheFile(new Path(args[2]).toUri());
+        FileOutputFormat.setOutputPath(knn, new Path(args[2]));
+        knn.addCacheFile(new Path(args[1]).toUri());
         System.exit(knn.waitForCompletion(true) ? 0 : 1);
     }
 }
