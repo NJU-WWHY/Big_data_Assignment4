@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws ClassNotFoundException, IOException, InterruptedException {
+        // 参数列表顺序: args[0]->训练集路径 args[1]->测试集路径 args[2]->输出文件目录
         Job knn = Job.getInstance();
         knn.setJarByClass(Knn.class);
         knn.setInputFormatClass(TextInputFormat.class);
